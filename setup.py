@@ -16,6 +16,7 @@ setup(
 	],
 
 	dependency_links = [
+		"git+https://github.com/ipython/ipython.git@1bf6e5d459a8bb4101e0a5da1d09c36412e37b22#egg=ipython-origin/HEAD"
 	],
 
 	scripts = [

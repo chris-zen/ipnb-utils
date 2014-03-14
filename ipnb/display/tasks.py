@@ -1,3 +1,4 @@
+from IPython.display import display
 from IPython.kernel.zmq.serialize import unpack_apply_message
 from IPython.parallel.client.asyncresult import AsyncResult, AsyncMapResult
 
