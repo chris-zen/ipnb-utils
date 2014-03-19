@@ -1,6 +1,8 @@
 import socket
 from datetime import datetime as dt
 
+from pymongo import MongoClient
+
 class Task(object):
     def __init__(self, name, item, db_conf):
         self.name = name
