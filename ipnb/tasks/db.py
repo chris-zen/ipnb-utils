@@ -45,3 +45,8 @@ class Task(object):
         upd = [("state", "finished"), ("finished", dt.now())]
         upd += [("meta.{}".format(k), v) for k, v in kwargs.items()]
         self.db.tasks.update(self.id, {"$set" : dict(upd), "$unset" : {"progress" : ""}})
+
+	def error(self, **kwargs):
+		upd = [("state", "failed"), ("failed", dt.now())]
+        upd += [("meta.{}".format(k), v) for k, v in kwargs.items()]
+        self.db.tasks.update(self.id, {"$set" : dict(upd), "$unset" : {"progress" : ""}})
