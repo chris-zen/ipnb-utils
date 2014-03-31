@@ -11,7 +11,7 @@ setup(
 	packages = find_packages(),
 
 	install_requires = [
-		"ipython>=2.0.0",
+		#"ipython>=2.0.0",
 		"pymongo"
 	],
 

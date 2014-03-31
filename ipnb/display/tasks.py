@@ -43,6 +43,9 @@ def display_task(client, ar):
         except:
             name = "[{}]".format(msg_id)
 
+        if i > 0:
+            print()
+
         print("[{}] {}".format(i, "".join(name)))
 
         # status
