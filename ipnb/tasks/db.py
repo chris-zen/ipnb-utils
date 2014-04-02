@@ -2,18 +2,24 @@ import socket
 from datetime import datetime as dt
 
 from pymongo import MongoClient
+import pymongo.uri_parser
 
 class Task(object):
-    def __init__(self, name, item, db_conf):
+    def __init__(self, name, item, uri):
         self.name = name
         self.item = item
         self.id = {"name" : self.name, "item" : self.item}
-        self.conn = MongoClient(db_conf["url"])
-        self.db = self.conn[db_conf["db"]]
+        
+        parsed_uri = pymongo.uri_parser.parse_uri(uri)
+        db_name = parsed_uri.get("database", "ipnb")
+        self.conn = MongoClient(uri)
+        self.db = self._conn[db_name]
 
         self.db.tasks.update(self.id, {"$set" : {"state" : "running",
                                                  "started" : dt.now(),
                                                  "host" : socket.gethostname()}}, upsert=True)
+                                                 
+        print("{} {} Task {}/{} started".format(dt.now(), name, item))
 
     def log(self, level, msg):
         ts = dt.now()
@@ -46,7 +52,7 @@ class Task(object):
         upd += [("meta.{}".format(k), v) for k, v in kwargs.items()]
         self.db.tasks.update(self.id, {"$set" : dict(upd), "$unset" : {"progress" : ""}})
 
-	def error(self, **kwargs):
-		upd = [("state", "failed"), ("failed", dt.now())]
+    def error(self, **kwargs):
+        upd = [("state", "failed"), ("failed", dt.now())]
         upd += [("meta.{}".format(k), v) for k, v in kwargs.items()]
         self.db.tasks.update(self.id, {"$set" : dict(upd), "$unset" : {"progress" : ""}})
