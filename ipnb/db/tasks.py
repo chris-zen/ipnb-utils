@@ -31,16 +31,19 @@ class Task(object):
 												 "started" : dt.now(),
 												 "host" : self.hostname}}, upsert=True)
 
-		self.logger("Task {} started on host {}".format(self.title, self.hostname))
+		self.logger.info("Task {} started on host {}".format(self.title, self.hostname))
 
+	# deprecated
 	def log(self, level, msg):
 		ts = dt.now()
 		self.db.tasks.update(self.id, {"$push" : {"logs" : { "t" : ts, "l" : level, "m" : msg}}})
 		print("{} {} {}".format(ts, level.upper(), msg))
 
+	# deprecated
 	def info(self, msg):
 		self.log("info", msg)
 
+	# deprecated
 	def debug(self, msg):
 		self.log("debug", msg)
 
