@@ -33,10 +33,6 @@ class Task(object):
 
 		self.logger("Task {} started on host {}".format(self.title, self.hostname))
 
-	@property
-	def logger(self):
-		return self.logger
-
 	def log(self, level, msg):
 		ts = dt.now()
 		self.db.tasks.update(self.id, {"$push" : {"logs" : { "t" : ts, "l" : level, "m" : msg}}})
