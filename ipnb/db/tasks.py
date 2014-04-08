@@ -75,7 +75,7 @@ class Task(object):
 		return False
 
 	def metadata(self, **kwargs):
-		upd += [("meta.{}".format(k), v) for k, v in kwargs.items()]
+		upd = [("meta.{}".format(k), v) for k, v in kwargs.items()]
 		self.db.tasks.update(self.id, {"$set" : dict(upd)})
 
 	def finished(self, **kwargs):
