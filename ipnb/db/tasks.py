@@ -17,14 +17,13 @@ class Task(object):
 		except:
 			self.hostname = "unknown"
 
-		logger = logging.getLogger(self.title)
-		for h in logger.handlers:
-			logger.removeHandler(h)
+		self.logger = logging.getLogger(self.title)
+		for h in self.logger.handlers:
+			self.logger.removeHandler(h)
 		h = logging.StreamHandler(sys.stdout)
 		h.setFormatter(logging.Formatter("%(asctime)s %(name)-10s [%(levelname)-7s] %(message)s", "%Y-%m-%d %H:%M:%S"))
-		logger.addHandler(h)
-		logger.setLevel(logging.INFO)
-		self.logger = logger
+		self.logger.addHandler(h)
+		self.logger.setLevel(logging.INFO)
 
 		self.db = mongodb_from_uri(uri, db_name="ipnb")
 
@@ -76,12 +75,21 @@ class Task(object):
 
 		return False
 
+	def metadata(self, **kwargs):
+		upd += [("meta.{}".format(k), v) for k, v in kwargs.items()]
+		self.db.tasks.update(self.id, {"$set" : dict(upd)})
+
 	def finished(self, **kwargs):
 		upd = [("state", "finished"), ("finished", dt.now())]
 		upd += [("meta.{}".format(k), v) for k, v in kwargs.items()]
 		self.db.tasks.update(self.id, {"$set" : dict(upd), "$unset" : {"progress" : ""}})
 
 	def error(self, **kwargs):
-		upd = [("state", "failed"), ("failed", dt.now())]
+		upd = []
+		if "exception" in kwargs:
+			upd += [("exception", kwargs.pop("exception"))]
+		if "traceback" in kwargs:
+			upd += [("traceback", kwargs.pop("traceback"))]
+		upd += [("state", "failed"), ("failed", dt.now())]
 		upd += [("meta.{}".format(k), v) for k, v in kwargs.items()]
 		self.db.tasks.update(self.id, {"$set" : dict(upd), "$unset" : {"progress" : ""}})
