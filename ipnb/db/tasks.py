@@ -24,6 +24,7 @@ class Task(object):
 		h.setFormatter(logging.Formatter("%(asctime)s %(name)-10s [%(levelname)-7s] %(message)s", "%Y-%m-%d %H:%M:%S"))
 		self.logger.addHandler(h)
 		self.logger.setLevel(logging.INFO)
+		self.logger.propagate = False
 
 		self.db = mongodb_from_uri(uri, db_name="ipnb")
 
